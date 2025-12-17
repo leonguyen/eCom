@@ -1,0 +1,89 @@
+{
+  "categories": [
+    {
+      "id": "electronics",
+      "name": "Electronics",
+      "icon": "fas fa-laptop",
+      "products": [
+        {
+          "id": 1,
+          "name": "Wireless Headphones",
+          "price": 79.99,
+          "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300",
+          "description": "Premium wireless headphones with noise cancellation",
+          "inStock": true
+        },
+        {
+          "id": 2,
+          "name": "Smart Watch",
+          "price": 199.99,
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300",
+          "description": "Fitness tracker with heart rate monitor",
+          "inStock": true
+        },
+        {
+          "id": 3,
+          "name": "Portable Speaker",
+          "price": 49.99,
+          "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=300",
+          "description": "Waterproof Bluetooth speaker",
+          "inStock": false
+        }
+      ]
+    },
+    {
+      "id": "clothing",
+      "name": "Clothing",
+      "icon": "fas fa-tshirt",
+      "products": [
+        {
+          "id": 4,
+          "name": "Classic T-Shirt",
+          "price": 24.99,
+          "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300",
+          "description": "100% cotton comfortable fit",
+          "inStock": true
+        },
+        {
+          "id": 5,
+          "name": "Denim Jacket",
+          "price": 89.99,
+          "image": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=300",
+          "description": "Vintage style denim jacket",
+          "inStock": true
+        }
+      ]
+    },
+    {
+      "id": "accessories",
+      "name": "Accessories",
+      "icon": "fas fa-glasses",
+      "products": [
+        {
+          "id": 6,
+          "name": "Leather Wallet",
+          "price": 45.99,
+          "image": "https://images.unsplash.com/photo-1627123424574-724758594e93?w=300",
+          "description": "Genuine leather bifold wallet",
+          "inStock": true
+        },
+        {
+          "id": 7,
+          "name": "Sunglasses",
+          "price": 129.99,
+          "image": "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=300",
+          "description": "UV protection polarized lenses",
+          "inStock": true
+        },
+        {
+          "id": 8,
+          "name": "Canvas Backpack",
+          "price": 59.99,
+          "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300",
+          "description": "Durable canvas with laptop compartment",
+          "inStock": false
+        }
+      ]
+    }
+  ]
+}
