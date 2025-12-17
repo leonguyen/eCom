@@ -132,6 +132,9 @@ class Li extends HtmlElement { constructor(attrs = {}, children = []) { super('l
 class A extends HtmlElement { constructor(attrs = {}, children = []) { super('a', attrs, children); } }
 class Nav extends HtmlElement { constructor(attrs = {}, children = []) { super('nav', attrs, children); } }
 class I extends HtmlElement { constructor(attrs = {}, children = []) { super('i', attrs, children); } }
+class Input extends HtmlElement { constructor(attrs = {}) { super('input', attrs); } }
+class Select extends HtmlElement { constructor(attrs = {}, children = []) { super('select', attrs, children); } }
+class Option extends HtmlElement { constructor(attrs = {}, children = []) { super('option', attrs, children); } }
 
 // ===== Reusable Tab Component (Polymorphic) =====
 class TabContainer extends Div {
@@ -193,21 +196,22 @@ class ProductCard extends Div {
       .addChild(new Img({ src: product.image, alt: product.name, loading: 'lazy' }));
     
     if (!product.inStock) {
-      imageContainer.addChild(new Span({ class: 'out-of-stock-badge' }).addText('Out of Stock'));
+      imageContainer.addChild(new Span({ class: 'out-of-stock-badge' }).addText('Hết hàng'));
     }
 
     const info = new Div({ class: 'product-info' })
-      .addChild(new H4({ class: 'product-name' }).addText(product.name))
-      .addChild(new P({ class: 'product-description' }).addText(product.description))
-      .addChild(new Div({ class: 'product-footer' })
-        .addChild(new Span({ class: 'product-price' }).addText(`$${product.price.toFixed(2)}`))
-        .addChild(new Button({
-          class: `btn-add-cart${!product.inStock ? ' disabled' : ''}`,
-          disabled: !product.inStock
-        }).addText(product.inStock ? 'Add to Cart' : 'Unavailable'))
-      );
+      .addChild(new Div({ class: 'product-name' }).addText(product.name))
+      .addChild(new Div({ class: 'product-price' }).addText(this.formatPrice(product.price)))
+      .addChild(new Button({
+        class: `btn-add-cart${!product.inStock ? ' disabled' : ''}`,
+        disabled: !product.inStock
+      }).addText(product.inStock ? 'Mua ngay' : 'Hết hàng'));
 
     this.addChildren([imageContainer, info]);
+  }
+
+  formatPrice(price) {
+    return new Intl.NumberFormat('vi-VN').format(price * 1000) + ' đ';
   }
 }
 
