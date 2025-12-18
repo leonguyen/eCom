@@ -16,7 +16,7 @@ class ShopApp {
 
   async loadData() {
     try {
-      const response = await fetch('data.json');
+      const response = await fetch('tab.json');
       const data = await response.json();
       
       // Handle both formats: { products: [...] } or { categories: [...] }
