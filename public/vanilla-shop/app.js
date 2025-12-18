@@ -15,7 +15,7 @@ class ShopApp {
 
   async loadData() {
     try {
-      const response = await fetch('products.json');
+      const response = await fetch('data.json');
       const data = await response.json();
       this.categories = data.categories;
     } catch (error) {
