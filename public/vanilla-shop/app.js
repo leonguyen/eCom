@@ -3,6 +3,7 @@
 class ShopApp {
   constructor(containerId) {
     this.containerId = containerId;
+    this.products = [];
     this.categories = [];
   }
 
@@ -17,7 +18,20 @@ class ShopApp {
     try {
       const response = await fetch('data.json');
       const data = await response.json();
-      this.categories = data.categories;
+      
+      // Handle both formats: { products: [...] } or { categories: [...] }
+      if (data.products) {
+        this.products = data.products;
+        // Auto-generate a single "All Products" category
+        this.categories = [{
+          id: 'all',
+          name: 'Tất cả sản phẩm',
+          icon: 'fas fa-store',
+          products: this.products
+        }];
+      } else if (data.categories) {
+        this.categories = data.categories;
+      }
     } catch (error) {
       console.error('Failed to load products:', error);
       this.categories = [];
@@ -61,14 +75,14 @@ class ShopApp {
   }
 
   initEventHandlers() {
-    // Add to cart
+    // Toast on external link clicks
     document.addEventListener('click', (e) => {
-      const cartBtn = e.target.closest('.btn-add-cart:not(.disabled)');
-      if (cartBtn) {
-        const card = cartBtn.closest('.product-card');
+      const link = e.target.closest('.btn-add-cart');
+      if (link && link.tagName === 'A') {
+        const card = link.closest('.product-card');
         const productName = card?.querySelector('.product-name')?.textContent;
         if (productName) {
-          this.showToast(`Đã thêm "${productName}" vào giỏ hàng!`);
+          this.showToast(`Đang mở "${productName}"...`);
         }
       }
     });

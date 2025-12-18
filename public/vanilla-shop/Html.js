@@ -190,28 +190,33 @@ class TabPane extends Div {
 // ===== Product Card Component (Polymorphic) =====
 class ProductCard extends Div {
   constructor(product) {
-    super({ class: 'product-card', 'data-product-id': product.id });
+    super({ class: 'product-card' });
+    
+    // Use first image from images array, or fallback
+    const imageUrl = product.images?.[0] || product.image || '';
+    const productName = product.title || product.name || 'Sản phẩm';
+    const productPrice = product.price || '';
+    const productLink = product.link || '#';
     
     const imageContainer = new Div({ class: 'product-image' })
-      .addChild(new Img({ src: product.image, alt: product.name, loading: 'lazy' }));
+      .addChild(new Img({ src: imageUrl, alt: productName, loading: 'lazy' }));
     
-    if (!product.inStock) {
+    // Check stock for old format
+    if (product.inStock === false) {
       imageContainer.addChild(new Span({ class: 'out-of-stock-badge' }).addText('Hết hàng'));
     }
 
     const info = new Div({ class: 'product-info' })
-      .addChild(new Div({ class: 'product-name' }).addText(product.name))
-      .addChild(new Div({ class: 'product-price' }).addText(this.formatPrice(product.price)))
-      .addChild(new Button({
-        class: `btn-add-cart${!product.inStock ? ' disabled' : ''}`,
-        disabled: !product.inStock
-      }).addText(product.inStock ? 'Mua ngay' : 'Hết hàng'));
+      .addChild(new Div({ class: 'product-name' }).addText(productName))
+      .addChild(new Div({ class: 'product-price' }).addText(productPrice || 'Liên hệ'))
+      .addChild(new A({
+        class: 'btn-add-cart',
+        href: productLink,
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      }).addText('Mua ngay'));
 
     this.addChildren([imageContainer, info]);
-  }
-
-  formatPrice(price) {
-    return new Intl.NumberFormat('vi-VN').format(price * 1000) + ' đ';
   }
 }
 
