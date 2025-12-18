@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 
-const Index = () => {
+const VanillaShop = () => {
   useEffect(() => {
-    // Basic SEO (no extra deps)
-    document.title = "Modern Shop – Premium Products";
+    document.title = "Cửa Hàng Sản Phẩm – Tab UI";
 
     const ensureMeta = (name: string, content: string) => {
       let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
@@ -15,9 +14,12 @@ const Index = () => {
       el.setAttribute("content", content);
     };
 
-    ensureMeta("description", "Modern Shop tab UI with premium products across categories.");
+    ensureMeta(
+      "description",
+      "Cửa hàng sản phẩm dạng tab UI (Vanilla JS) hiển thị trong trang riêng."
+    );
 
-    const canonicalHref = `${window.location.origin}/`;
+    const canonicalHref = `${window.location.origin}/vanilla-shop`;
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!canonical) {
       canonical = document.createElement("link");
@@ -30,25 +32,25 @@ const Index = () => {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="mx-auto max-w-6xl px-4 py-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Modern Shop</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Cửa Hàng Sản Phẩm</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Tab UI demo (Vanilla JS) embedded inside the React home page.
+          Trang /vanilla-shop để tránh lỗi 404 khi mở đường dẫn thư mục.
         </p>
         <a
-          href="/vanilla-shop"
+          href="/vanilla-shop/index.html"
           className="mt-3 inline-flex text-sm font-medium text-primary underline underline-offset-4 hover:text-primary/90"
         >
-          Open full page
+          Mở file gốc (index.html)
         </a>
       </header>
 
       <section className="mx-auto max-w-6xl px-4 pb-10">
         <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
           <iframe
-            title="Modern Shop tab UI"
+            title="Cửa hàng sản phẩm (Vanilla JS)"
             src="/vanilla-shop/index.html"
             loading="lazy"
-            className="h-[78vh] w-full"
+            className="h-[85vh] w-full"
           />
         </div>
       </section>
@@ -56,5 +58,4 @@ const Index = () => {
   );
 };
 
-export default Index;
-
+export default VanillaShop;
