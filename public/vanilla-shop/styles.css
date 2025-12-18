@@ -97,10 +97,78 @@ body {
   border-color: var(--primary);
 }
 
+/* ===== Tab UI Styles ===== */
+.tab-container {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.tab-nav {
+  display: flex;
+  list-style: none;
+  background: var(--primary);
+  padding: 0;
+  margin: 0;
+  overflow-x: auto;
+}
+
+.tab-item {
+  flex: 1;
+  min-width: max-content;
+}
+
+.tab-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+  border-bottom: 3px solid transparent;
+}
+
+.tab-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tab-link.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border-bottom-color: #fff;
+}
+
+.tab-link i {
+  font-size: 1.1rem;
+}
+
+.tab-content {
+  padding: 1.5rem;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Product Grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.25rem;
 }
 
