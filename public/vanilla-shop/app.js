@@ -70,7 +70,7 @@ class ShopApp {
     // ===== Section 2: All Products - Pagination (data.json) =====
     const paginatedSection = new Div({ class: 'section paginated-section sub-section' })
       .addChild(new H2({ class: 'section-title secondary' }).addText('Tất Cả Sản Phẩm'))
-      .addChild(new PaginatedProductGrid('products-pagination', this.products, 1, 4));
+      .addChild(new PaginatedProductGrid('products-pagination', this.products, 1, 8));
 
     // Build App
     const header = new Div({ class: 'shop-header' })
@@ -93,7 +93,7 @@ class ShopApp {
     this.paginationController = new PaginationController(
       'products-pagination',
       this.products,
-      4
+      8
     );
   }
 
