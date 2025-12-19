@@ -49,12 +49,7 @@ class ShopApp {
     const container = document.getElementById(this.containerId);
     if (!container) return;
 
-    // ===== Section 1: Paginated Products (data.json) =====
-    const paginatedSection = new Div({ class: 'section paginated-section' })
-      .addChild(new H2({ class: 'section-title' }).addText('Sản Phẩm Mới'))
-      .addChild(new PaginatedProductGrid('products-pagination', this.products, 1, 4));
-
-    // ===== Section 2: Tab UI (tab.json) =====
+    // ===== Section 1: Main Sale - Tab UI (tab.json) =====
     const tabContainer = new TabContainer('product-tabs');
     
     this.categories.forEach((category, index) => {
@@ -68,9 +63,14 @@ class ShopApp {
       pane.addChild(new ProductGrid(category.products));
     });
 
-    const tabSection = new Div({ class: 'section tab-section' })
-      .addChild(new H2({ class: 'section-title' }).addText('Danh Mục Sản Phẩm'))
+    const tabSection = new Div({ class: 'section tab-section main-section' })
+      .addChild(new H2({ class: 'section-title' }).addText('Sản Phẩm Nổi Bật'))
       .addChild(tabContainer);
+
+    // ===== Section 2: All Products - Pagination (data.json) =====
+    const paginatedSection = new Div({ class: 'section paginated-section sub-section' })
+      .addChild(new H2({ class: 'section-title secondary' }).addText('Tất Cả Sản Phẩm'))
+      .addChild(new PaginatedProductGrid('products-pagination', this.products, 1, 4));
 
     // Build App
     const header = new Div({ class: 'shop-header' })
@@ -78,8 +78,8 @@ class ShopApp {
 
     const app = new Div({ class: 'container' })
       .addChild(header)
-      .addChild(paginatedSection)
-      .addChild(tabSection);
+      .addChild(tabSection)
+      .addChild(paginatedSection);
 
     container.innerHTML = '';
     container.appendChild(app.toHtmlElement());
