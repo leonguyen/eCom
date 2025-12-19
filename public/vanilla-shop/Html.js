@@ -228,6 +228,60 @@ class ProductGrid extends Div {
   }
 }
 
+// ===== Pagination Component =====
+class Pagination extends Div {
+  constructor(containerId, currentPage, totalPages) {
+    super({ class: 'pagination', 'data-container': containerId });
+
+    // Prev button
+    const prevBtn = new Button({
+      class: `pagination-btn prev${currentPage <= 1 ? ' disabled' : ''}`,
+      'data-page': currentPage - 1,
+      disabled: currentPage <= 1
+    }).addChild(new I({ class: 'fas fa-chevron-left' }));
+    this.addChild(prevBtn);
+
+    // Page numbers
+    const pageNumbers = new Div({ class: 'pagination-numbers' });
+    for (let i = 1; i <= totalPages; i++) {
+      const pageBtn = new Button({
+        class: `pagination-btn page-num${i === currentPage ? ' active' : ''}`,
+        'data-page': i
+      }).addText(String(i));
+      pageNumbers.addChild(pageBtn);
+    }
+    this.addChild(pageNumbers);
+
+    // Next button
+    const nextBtn = new Button({
+      class: `pagination-btn next${currentPage >= totalPages ? ' disabled' : ''}`,
+      'data-page': currentPage + 1,
+      disabled: currentPage >= totalPages
+    }).addChild(new I({ class: 'fas fa-chevron-right' }));
+    this.addChild(nextBtn);
+  }
+}
+
+// ===== Paginated Product Grid Component =====
+class PaginatedProductGrid extends Div {
+  constructor(containerId, products = [], currentPage = 1, itemsPerPage = 4) {
+    super({ id: containerId, class: 'paginated-products' });
+    
+    const totalPages = Math.ceil(products.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentProducts = products.slice(startIndex, endIndex);
+
+    // Product grid
+    this.addChild(new ProductGrid(currentProducts));
+
+    // Pagination controls
+    if (totalPages > 1) {
+      this.addChild(new Pagination(containerId, currentPage, totalPages));
+    }
+  }
+}
+
 // Tab Controller - handles tab switching
 class TabController {
   constructor(containerId) {
@@ -255,5 +309,58 @@ class TabController {
     this.container.querySelectorAll('.tab-pane').forEach(pane => {
       pane.classList.toggle('active', pane.id === tabId);
     });
+  }
+}
+
+// ===== Pagination Controller =====
+class PaginationController {
+  constructor(containerId, products, itemsPerPage = 4, onPageChange = null) {
+    this.containerId = containerId;
+    this.products = products;
+    this.itemsPerPage = itemsPerPage;
+    this.currentPage = 1;
+    this.onPageChange = onPageChange;
+    this.init();
+  }
+
+  init() {
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.pagination-btn');
+      if (!btn) return;
+      
+      const pagination = btn.closest('.pagination');
+      if (!pagination || pagination.dataset.container !== this.containerId) return;
+      
+      const page = parseInt(btn.dataset.page, 10);
+      if (!isNaN(page) && page !== this.currentPage) {
+        this.goToPage(page);
+      }
+    });
+  }
+
+  goToPage(page) {
+    const totalPages = Math.ceil(this.products.length / this.itemsPerPage);
+    if (page < 1 || page > totalPages) return;
+    
+    this.currentPage = page;
+    this.render();
+    
+    if (this.onPageChange) {
+      this.onPageChange(page);
+    }
+  }
+
+  render() {
+    const container = document.getElementById(this.containerId);
+    if (!container) return;
+    
+    const newGrid = new PaginatedProductGrid(
+      this.containerId,
+      this.products,
+      this.currentPage,
+      this.itemsPerPage
+    );
+    
+    container.replaceWith(newGrid.toHtmlElement());
   }
 }

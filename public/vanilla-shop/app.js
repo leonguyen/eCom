@@ -1,39 +1,46 @@
-// ===== Shop Application with Tab UI - Pure Vanilla JS =====
+// ===== Shop Application with Tab UI + Pagination - Pure Vanilla JS =====
 
 class ShopApp {
   constructor(containerId) {
     this.containerId = containerId;
-    this.products = [];
-    this.categories = [];
+    this.products = [];        // For pagination (data.json)
+    this.categories = [];      // For tabs (tab.json)
+    this.paginationController = null;
   }
 
   async init() {
     await this.loadData();
     this.render();
     this.initTabController();
+    this.initPaginationController();
     this.initEventHandlers();
   }
 
   async loadData() {
     try {
-      const response = await fetch('tab.json');
-      const data = await response.json();
+      // Load data.json for pagination
+      const dataResponse = await fetch('data.json');
+      const dataJson = await dataResponse.json();
+      this.products = dataJson.products || [];
+
+      // Load tab.json for tabs
+      const tabResponse = await fetch('tab.json');
+      const tabJson = await tabResponse.json();
       
-      // Handle both formats: { products: [...] } or { categories: [...] }
-      if (data.products) {
-        this.products = data.products;
-        // Auto-generate a single "All Products" category
+      if (tabJson.categories) {
+        this.categories = tabJson.categories;
+      } else if (tabJson.products) {
+        // Fallback: auto-generate a single category
         this.categories = [{
           id: 'all',
           name: 'Tất cả sản phẩm',
           icon: 'fas fa-store',
-          products: this.products
+          products: tabJson.products
         }];
-      } else if (data.categories) {
-        this.categories = data.categories;
       }
     } catch (error) {
-      console.error('Failed to load products:', error);
+      console.error('Failed to load data:', error);
+      this.products = [];
       this.categories = [];
     }
   }
@@ -42,11 +49,12 @@ class ShopApp {
     const container = document.getElementById(this.containerId);
     if (!container) return;
 
-    // Build Header
-    const header = new Div({ class: 'shop-header' })
-      .addChild(new H1().addText('Cửa Hàng Sản Phẩm'));
+    // ===== Section 1: Paginated Products (data.json) =====
+    const paginatedSection = new Div({ class: 'section paginated-section' })
+      .addChild(new H2({ class: 'section-title' }).addText('Sản Phẩm Mới'))
+      .addChild(new PaginatedProductGrid('products-pagination', this.products, 1, 4));
 
-    // Build Tab Container with categories
+    // ===== Section 2: Tab UI (tab.json) =====
     const tabContainer = new TabContainer('product-tabs');
     
     this.categories.forEach((category, index) => {
@@ -57,14 +65,21 @@ class ShopApp {
         category.icon,
         isActive
       );
-      // Add product grid to each tab pane
       pane.addChild(new ProductGrid(category.products));
     });
 
+    const tabSection = new Div({ class: 'section tab-section' })
+      .addChild(new H2({ class: 'section-title' }).addText('Danh Mục Sản Phẩm'))
+      .addChild(tabContainer);
+
     // Build App
+    const header = new Div({ class: 'shop-header' })
+      .addChild(new H1().addText('Cửa Hàng Sản Phẩm'));
+
     const app = new Div({ class: 'container' })
       .addChild(header)
-      .addChild(tabContainer);
+      .addChild(paginatedSection)
+      .addChild(tabSection);
 
     container.innerHTML = '';
     container.appendChild(app.toHtmlElement());
@@ -72,6 +87,14 @@ class ShopApp {
 
   initTabController() {
     new TabController('product-tabs');
+  }
+
+  initPaginationController() {
+    this.paginationController = new PaginationController(
+      'products-pagination',
+      this.products,
+      4
+    );
   }
 
   initEventHandlers() {
