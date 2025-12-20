@@ -3,8 +3,14 @@
 class ShopApp {
   constructor(containerId) {
     this.containerId = containerId;
-    this.products = [];        // For pagination (data.json)
-    this.categories = [];      // For tabs (tab.json)
+    this.products = []; // For pagination (data.json)
+    this.categories = []; // For tabs (tab.json)
+
+    // All Products controls
+    this.searchTerm = '';
+    this.itemsPerPage = 4;
+    this.filteredProducts = [];
+
     this.paginationController = null;
   }
 
@@ -13,6 +19,7 @@ class ShopApp {
     this.render();
     this.initTabController();
     this.initPaginationController();
+    this.initControls();
     this.initEventHandlers();
   }
 
@@ -22,6 +29,7 @@ class ShopApp {
       const dataResponse = await fetch('data.json');
       const dataJson = await dataResponse.json();
       this.products = dataJson.products || [];
+      this.filteredProducts = this.products;
 
       // Load tab.json for tabs
       const tabResponse = await fetch('tab.json');
@@ -68,9 +76,30 @@ class ShopApp {
       .addChild(tabContainer);
 
     // ===== Section 2: All Products - Pagination (data.json) =====
+    const controls = new Div({ class: 'controls' })
+      .addChild(new Input({
+        id: 'search',
+        type: 'text',
+        class: 'search-input',
+        placeholder: 'Tìm kiếm sản phẩm...',
+        'aria-label': 'Tìm kiếm sản phẩm'
+      }))
+      .addChild(
+        new Select({
+          id: 'itemsPerPage',
+          class: 'items-select',
+          'aria-label': 'Số sản phẩm mỗi trang'
+        })
+          .addChild(new Option({ value: '2', selected: this.itemsPerPage === 2 }).addText('2 / trang'))
+          .addChild(new Option({ value: '4', selected: this.itemsPerPage === 4 }).addText('4 / trang'))
+          .addChild(new Option({ value: '6', selected: this.itemsPerPage === 6 }).addText('6 / trang'))
+          .addChild(new Option({ value: '8', selected: this.itemsPerPage === 8 }).addText('8 / trang'))
+      );
+
     const paginatedSection = new Div({ class: 'section paginated-section sub-section' })
       .addChild(new H2({ class: 'section-title secondary' }).addText('Tất Cả Sản Phẩm'))
-      .addChild(new PaginatedProductGrid('products-pagination', this.products, 1, 8));
+      .addChild(controls)
+      .addChild(new PaginatedProductGrid('products-pagination', this.filteredProducts, 1, this.itemsPerPage));
 
     // Build App
     const header = new Div({ class: 'shop-header' })
@@ -92,9 +121,47 @@ class ShopApp {
   initPaginationController() {
     this.paginationController = new PaginationController(
       'products-pagination',
-      this.products,
-      8
+      this.filteredProducts,
+      this.itemsPerPage
     );
+  }
+
+  initControls() {
+    const searchEl = document.getElementById('search');
+    const itemsEl = document.getElementById('itemsPerPage');
+
+    if (searchEl) {
+      searchEl.addEventListener('input', (e) => {
+        this.searchTerm = e.target.value || '';
+        this.applyFilters();
+      });
+    }
+
+    if (itemsEl) {
+      itemsEl.addEventListener('change', (e) => {
+        const next = parseInt(e.target.value, 10);
+        if (!isNaN(next)) {
+          this.itemsPerPage = next;
+          this.applyFilters();
+        }
+      });
+    }
+  }
+
+  applyFilters() {
+    const term = (this.searchTerm || '').trim().toLowerCase();
+    const source = this.products || [];
+
+    this.filteredProducts = !term
+      ? source
+      : source.filter((p) => {
+          const name = (p.title || p.name || '').toLowerCase();
+          return name.includes(term);
+        });
+
+    if (this.paginationController) {
+      this.paginationController.setData(this.filteredProducts, this.itemsPerPage);
+    }
   }
 
   initEventHandlers() {
