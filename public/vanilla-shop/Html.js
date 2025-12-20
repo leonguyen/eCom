@@ -266,11 +266,17 @@ class Pagination extends Div {
 class PaginatedProductGrid extends Div {
   constructor(containerId, products = [], currentPage = 1, itemsPerPage = 4) {
     super({ id: containerId, class: 'paginated-products' });
-    
+
     const totalPages = Math.ceil(products.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const currentProducts = products.slice(startIndex, endIndex);
+
+    // Empty state
+    if (!currentProducts.length) {
+      this.addChild(new Div({ class: 'empty-state' }).addText('Không tìm thấy sản phẩm nào.'));
+      return;
+    }
 
     // Product grid
     this.addChild(new ProductGrid(currentProducts));
@@ -338,13 +344,20 @@ class PaginationController {
     });
   }
 
+  setData(products, itemsPerPage) {
+    this.products = products || [];
+    this.itemsPerPage = itemsPerPage || this.itemsPerPage;
+    this.currentPage = 1;
+    this.render();
+  }
+
   goToPage(page) {
-    const totalPages = Math.ceil(this.products.length / this.itemsPerPage);
+    const totalPages = Math.ceil(this.products.length / this.itemsPerPage) || 1;
     if (page < 1 || page > totalPages) return;
-    
+
     this.currentPage = page;
     this.render();
-    
+
     if (this.onPageChange) {
       this.onPageChange(page);
     }
@@ -353,14 +366,14 @@ class PaginationController {
   render() {
     const container = document.getElementById(this.containerId);
     if (!container) return;
-    
+
     const newGrid = new PaginatedProductGrid(
       this.containerId,
       this.products,
       this.currentPage,
       this.itemsPerPage
     );
-    
+
     container.replaceWith(newGrid.toHtmlElement());
   }
 }
