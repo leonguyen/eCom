@@ -1,21 +1,6 @@
 {
   "categories": [
     {
-      "id": "do-uong",
-      "name": "Đồ Uống",
-      "icon": "fas fa-coffee",
-      "products": [
-        {
-          "title": "Nước mía mang đi (248 Nguyễn Thái Bình, P.Bảy Hiền, Tp.HCM",
-          "price": "10.000 đ",
-          "link": "https://contacts-bay.vercel.app/",
-          "images": [
-            "https://ucarecdn.com/270d0c10-c9b1-44b1-9696-8225b3ecf45b/-/preview/1000x750/"
-          ]
-        }
-      ]
-    },
-    {
       "id": "van-phong-pham",
       "name": "Văn Phòng Phẩm",
       "icon": "fas fa-pen",
