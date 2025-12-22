@@ -231,33 +231,24 @@ class ProductGrid extends Div {
 // ===== Pagination Component =====
 class Pagination extends Div {
   constructor(containerId, currentPage, totalPages) {
-    super({ class: 'pagination', 'data-container': containerId });
+    super({ class: 'pagination', 'data-container': containerId, 'aria-label': 'Điều hướng trang' });
 
-    // Prev button
+    // Prev button (‹)
     const prevBtn = new Button({
       class: `pagination-btn prev${currentPage <= 1 ? ' disabled' : ''}`,
       'data-page': currentPage - 1,
-      disabled: currentPage <= 1
-    }).addChild(new I({ class: 'fas fa-chevron-left' }));
+      disabled: currentPage <= 1,
+      'aria-label': 'Trang trước'
+    }).addText('‹');
     this.addChild(prevBtn);
 
-    // Page numbers
-    const pageNumbers = new Div({ class: 'pagination-numbers' });
-    for (let i = 1; i <= totalPages; i++) {
-      const pageBtn = new Button({
-        class: `pagination-btn page-num${i === currentPage ? ' active' : ''}`,
-        'data-page': i
-      }).addText(String(i));
-      pageNumbers.addChild(pageBtn);
-    }
-    this.addChild(pageNumbers);
-
-    // Next button
+    // Next button (›)
     const nextBtn = new Button({
       class: `pagination-btn next${currentPage >= totalPages ? ' disabled' : ''}`,
       'data-page': currentPage + 1,
-      disabled: currentPage >= totalPages
-    }).addChild(new I({ class: 'fas fa-chevron-right' }));
+      disabled: currentPage >= totalPages,
+      'aria-label': 'Trang sau'
+    }).addText('›');
     this.addChild(nextBtn);
   }
 }
@@ -333,10 +324,11 @@ class PaginationController {
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('.pagination-btn');
       if (!btn) return;
-      
+      if (btn.disabled) return;
+
       const pagination = btn.closest('.pagination');
       if (!pagination || pagination.dataset.container !== this.containerId) return;
-      
+
       const page = parseInt(btn.dataset.page, 10);
       if (!isNaN(page) && page !== this.currentPage) {
         this.goToPage(page);
@@ -348,7 +340,7 @@ class PaginationController {
     this.products = products || [];
     this.itemsPerPage = itemsPerPage || this.itemsPerPage;
     this.currentPage = 1;
-    this.render();
+    this.render(true);
   }
 
   goToPage(page) {
@@ -356,14 +348,14 @@ class PaginationController {
     if (page < 1 || page > totalPages) return;
 
     this.currentPage = page;
-    this.render();
+    this.render(true);
 
     if (this.onPageChange) {
       this.onPageChange(page);
     }
   }
 
-  render() {
+  render(shouldScroll = false) {
     const container = document.getElementById(this.containerId);
     if (!container) return;
 
@@ -374,6 +366,13 @@ class PaginationController {
       this.itemsPerPage
     );
 
-    container.replaceWith(newGrid.toHtmlElement());
+    const nextEl = newGrid.toHtmlElement();
+    container.replaceWith(nextEl);
+
+    if (shouldScroll && nextEl && typeof nextEl.scrollIntoView === 'function') {
+      requestAnimationFrame(() => {
+        nextEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
   }
 }
