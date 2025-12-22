@@ -242,6 +242,22 @@ class Pagination extends Div {
     }).addText('‹');
     this.addChild(prevBtn);
 
+    // Dots (slide indicators)
+    if (totalPages > 1) {
+      const dots = new Div({ class: 'pagination-dots', role: 'list', 'aria-label': 'Chọn trang' });
+      for (let i = 1; i <= totalPages; i++) {
+        const dotBtn = new Button({
+          class: `pagination-btn dot${i === currentPage ? ' active' : ''}`,
+          'data-page': i,
+          'aria-label': `Trang ${i}`,
+          title: `Trang ${i}`,
+          type: 'button'
+        }).addText('•');
+        dots.addChild(dotBtn);
+      }
+      this.addChild(dots);
+    }
+
     // Next button (›)
     const nextBtn = new Button({
       class: `pagination-btn next${currentPage >= totalPages ? ' disabled' : ''}`,
@@ -252,6 +268,7 @@ class Pagination extends Div {
     this.addChild(nextBtn);
   }
 }
+
 
 // ===== Paginated Product Grid Component =====
 class PaginatedProductGrid extends Div {
@@ -364,7 +381,7 @@ class PaginationController {
       this.products,
       this.currentPage,
       this.itemsPerPage
-    );
+    ).addClass('page-enter');
 
     const nextEl = newGrid.toHtmlElement();
     container.replaceWith(nextEl);
