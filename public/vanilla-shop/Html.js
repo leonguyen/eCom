@@ -238,6 +238,7 @@ class Pagination extends Div {
       class: `pagination-btn prev${currentPage <= 1 ? ' disabled' : ''}`,
       'data-page': currentPage - 1,
       disabled: currentPage <= 1,
+      type: 'button',
       'aria-label': 'Trang trước'
     }).addText('‹');
     this.addChild(prevBtn);
@@ -263,6 +264,7 @@ class Pagination extends Div {
       class: `pagination-btn next${currentPage >= totalPages ? ' disabled' : ''}`,
       'data-page': currentPage + 1,
       disabled: currentPage >= totalPages,
+      type: 'button',
       'aria-label': 'Trang sau'
     }).addText('›');
     this.addChild(nextBtn);
@@ -339,9 +341,16 @@ class PaginationController {
 
   init() {
     document.addEventListener('click', (e) => {
-      const btn = e.target.closest('.pagination-btn');
+      // Some browsers may report Text nodes as targets
+      const target = (e.target && e.target.nodeType === 3)
+        ? e.target.parentElement
+        : e.target;
+
+      if (!target || typeof target.closest !== 'function') return;
+
+      const btn = target.closest('.pagination-btn');
       if (!btn) return;
-      if (btn.disabled) return;
+      if (btn instanceof HTMLButtonElement && btn.disabled) return;
 
       const pagination = btn.closest('.pagination');
       if (!pagination || pagination.dataset.container !== this.containerId) return;
@@ -381,14 +390,23 @@ class PaginationController {
       this.products,
       this.currentPage,
       this.itemsPerPage
-    ).addClass('page-enter');
+    );
 
     const nextEl = newGrid.toHtmlElement();
-    container.replaceWith(nextEl);
 
-    if (shouldScroll && nextEl && typeof nextEl.scrollIntoView === 'function') {
+    // Update in-place (more reliable than replaceWith across environments)
+    container.className = nextEl.className;
+    container.innerHTML = '';
+    while (nextEl.firstChild) {
+      container.appendChild(nextEl.firstChild);
+    }
+
+    container.classList.add('page-enter');
+    setTimeout(() => container.classList.remove('page-enter'), 260);
+
+    if (shouldScroll && typeof container.scrollIntoView === 'function') {
       requestAnimationFrame(() => {
-        nextEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
   }
