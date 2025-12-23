@@ -165,6 +165,62 @@ class ShopApp {
   }
 
   initEventHandlers() {
+    // Image slider (dots + arrows)
+    document.addEventListener('click', (e) => {
+      const target = (e.target && e.target.nodeType === 3)
+        ? e.target.parentElement
+        : e.target;
+
+      if (!target || typeof target.closest !== 'function') return;
+
+      const dot = target.closest('.image-dot');
+      const nav = target.closest('.image-nav');
+      if (!dot && !nav) return;
+
+      const trigger = dot || nav;
+      const imageWrap = trigger.closest('.product-image');
+      const img = imageWrap?.querySelector('img');
+      if (!imageWrap || !img) return;
+
+      const raw = imageWrap.dataset.images;
+      if (!raw) return;
+
+      let images = [];
+      try {
+        images = JSON.parse(decodeURIComponent(raw));
+      } catch {
+        images = [];
+      }
+
+      if (!Array.isArray(images) || images.length < 2) return;
+
+      const current = parseInt(imageWrap.dataset.imageIndex || '0', 10) || 0;
+      let nextIndex = current;
+
+      if (dot) {
+        nextIndex = parseInt(dot.dataset.index || '0', 10) || 0;
+      } else {
+        const dir = parseInt(nav.dataset.dir || '0', 10) || 0;
+        nextIndex = (current + dir + images.length) % images.length;
+      }
+
+      if (nextIndex === current) return;
+
+      const nextSrc = images[nextIndex];
+      if (!nextSrc) return;
+
+      imageWrap.dataset.imageIndex = String(nextIndex);
+      imageWrap.querySelectorAll('.image-dot').forEach((d) => {
+        d.classList.toggle('active', d.dataset.index === String(nextIndex));
+      });
+
+      img.classList.add('is-switching');
+      const cleanup = () => img.classList.remove('is-switching');
+      img.addEventListener('transitionend', cleanup, { once: true });
+      img.setAttribute('src', nextSrc);
+      setTimeout(cleanup, 260);
+    });
+
     // Toast on external link clicks
     document.addEventListener('click', (e) => {
       const link = e.target.closest('.btn-add-cart');

@@ -294,25 +294,74 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.22s ease;
+}
+
+.product-image img.is-switching {
+  opacity: 0.6;
 }
 
 .product-card:hover .product-image img {
   transform: scale(1.03);
 }
 
-.out-of-stock-badge {
+.image-dots {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: #ef4444;
-  color: #fff;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
+  left: 50%;
+  bottom: 0.6rem;
+  transform: translateX(-50%);
+  display: inline-flex;
+  gap: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.28);
+  backdrop-filter: blur(6px);
+  z-index: 3;
 }
+
+.image-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.image-dot.active {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.image-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: rgba(15, 23, 42, 0.25);
+  color: rgba(255, 255, 255, 0.95);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.image-nav.prev {
+  left: 0.6rem;
+}
+
+.image-nav.next {
+  right: 0.6rem;
+}
+
+.image-nav:hover {
+  background: rgba(15, 23, 42, 0.38);
+}
+
 
 .product-info {
   padding: 1rem;
