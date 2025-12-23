@@ -337,8 +337,8 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 2rem;
-  height: 2rem;
+  width: 2.4rem;
+  height: 2.4rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.75);
   background: rgba(15, 23, 42, 0.25);
@@ -348,6 +348,7 @@ body {
   justify-content: center;
   cursor: pointer;
   z-index: 3;
+  user-select: none;
 }
 
 .image-nav.prev {
@@ -360,6 +361,16 @@ body {
 
 .image-nav:hover {
   background: rgba(15, 23, 42, 0.38);
+}
+
+/* Make sure overlay controls are clickable above image */
+.product-image img {
+  pointer-events: none;
+}
+
+.image-dots,
+.image-nav {
+  pointer-events: auto;
 }
 
 
