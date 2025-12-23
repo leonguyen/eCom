@@ -191,16 +191,53 @@ class TabPane extends Div {
 class ProductCard extends Div {
   constructor(product) {
     super({ class: 'product-card' });
-    
-    // Use first image from images array, or fallback
-    const imageUrl = product.images?.[0] || product.image || '';
+
+    const images = Array.isArray(product.images) && product.images.length
+      ? product.images
+      : (product.image ? [product.image] : []);
+
+    const imageUrl = images[0] || '';
     const productName = product.title || product.name || 'Sản phẩm';
     const productPrice = product.price || '';
     const productLink = product.link || '#';
-    
-    const imageContainer = new Div({ class: 'product-image' })
-      .addChild(new Img({ src: imageUrl, alt: productName, loading: 'lazy' }));
-    
+
+    const imageContainer = new Div({
+      class: 'product-image',
+      'data-images': encodeURIComponent(JSON.stringify(images)),
+      'data-image-index': '0'
+    });
+    imageContainer.addChild(new Img({ src: imageUrl, alt: productName, loading: 'lazy' }));
+
+    // Image slider controls (when multiple images)
+    if (images.length > 1) {
+      imageContainer.addChildren([
+        new Button({
+          type: 'button',
+          class: 'image-nav prev',
+          'data-dir': '-1',
+          'aria-label': 'Ảnh trước'
+        }).addText('‹'),
+        new Button({
+          type: 'button',
+          class: 'image-nav next',
+          'data-dir': '1',
+          'aria-label': 'Ảnh sau'
+        }).addText('›')
+      ]);
+
+      const dots = new Div({ class: 'image-dots', role: 'tablist', 'aria-label': 'Điều hướng ảnh' });
+      images.forEach((_, idx) => {
+        const dot = new Button({
+          type: 'button',
+          class: `image-dot${idx === 0 ? ' active' : ''}`,
+          'data-index': String(idx),
+          'aria-label': `Ảnh ${idx + 1}`
+        });
+        dots.addChild(dot);
+      });
+      imageContainer.addChild(dots);
+    }
+
     // Check stock for old format
     if (product.inStock === false) {
       imageContainer.addChild(new Span({ class: 'out-of-stock-badge' }).addText('Hết hàng'));
