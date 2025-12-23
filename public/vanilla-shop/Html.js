@@ -340,20 +340,31 @@ class PaginationController {
   }
 
   init() {
-    document.addEventListener('click', (e) => {
+    // Bind click handling to the container itself (more reliable than document-level
+    // delegation when the page is embedded in an iframe)
+    const root = document.getElementById(this.containerId);
+    if (!root) return;
+
+    root.addEventListener('click', (e) => {
       // Some browsers may report Text nodes as targets
-      const target = (e.target && e.target.nodeType === 3)
+      const rawTarget = (e.target && e.target.nodeType === 3)
         ? e.target.parentElement
         : e.target;
 
-      if (!target || typeof target.closest !== 'function') return;
+      if (!rawTarget || typeof rawTarget.closest !== 'function') return;
 
-      const btn = target.closest('.pagination-btn');
+      const btn = rawTarget.closest('.pagination-btn');
       if (!btn) return;
-      if (btn instanceof HTMLButtonElement && btn.disabled) return;
 
-      const pagination = btn.closest('.pagination');
-      if (!pagination || pagination.dataset.container !== this.containerId) return;
+      // Prevent any default behaviors (esp. inside embedded contexts)
+      e.preventDefault?.();
+
+      const isDisabled =
+        (btn instanceof HTMLButtonElement && btn.disabled) ||
+        btn.classList.contains('disabled') ||
+        btn.getAttribute('aria-disabled') === 'true';
+
+      if (isDisabled) return;
 
       const page = parseInt(btn.dataset.page, 10);
       if (!isNaN(page) && page !== this.currentPage) {
