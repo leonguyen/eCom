@@ -1,8 +1,8 @@
 {
   "categories": [
     {
-      "id": "do-uong",
-      "name": "Đồ Uống",
+      "id": "nuoc-mia",
+      "name": "Nước mía",
       "icon": "fas fa-coffee",
       "products": [
         {
@@ -16,8 +16,8 @@
       ]
     },
     {
-      "id": "do-uong-2",
-      "name": "Đồ Uống 2",
+      "id": "nuoc-cam",
+      "name": "Nước cam",
       "icon": "fas fa-coffee",
       "products": [
         {
@@ -25,7 +25,7 @@
           "price": "15.000 đ",
           "link": "https://contacts-bay.vercel.app/",
           "images": [
-            "https://ucarecdn.com/270d0c10-c9b1-44b1-9696-8225b3ecf45b/-/preview/1000x750/"
+            "https://ucarecdn.com/64ae504a-d01a-4aaa-9903-f885ce954954/-/preview/417x626/"
           ]
         }
       ]
