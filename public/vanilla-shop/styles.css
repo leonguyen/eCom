@@ -494,6 +494,13 @@ body::before {
   box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35), 0 0 25px rgba(236, 72, 153, 0.2);
 }
 
+.btn-add-cart:active:not(.disabled),
+.btn-add-cart.clicked {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
 .btn-add-cart.disabled {
   background: linear-gradient(135deg, #9ca3af, #6b7280);
   cursor: not-allowed;
