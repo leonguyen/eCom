@@ -24,26 +24,29 @@ class ShopApp {
   }
 
   async loadData() {
+    const TAB_API = 'https://tbdbuynmrumgdjrfunrd.supabase.co/functions/v1/yaml-api/documents/ca93a126-0ca1-4823-9f19-a8a543966571?api_key=sk_69fbafde078f7745ae7184f6ac0ab188a78b2af7a440147eeea28686a0108e9e';
+    const DATA_API = 'https://tbdbuynmrumgdjrfunrd.supabase.co/functions/v1/yaml-api/documents/9b219646-b65f-4713-b792-9682899fec7a?api_key=sk_69fbafde078f7745ae7184f6ac0ab188a78b2af7a440147eeea28686a0108e9e';
+
     try {
-      // Load data.json for pagination
-      const dataResponse = await fetch('data.json');
+      // Load products for pagination from remote API
+      const dataResponse = await fetch(DATA_API);
       const dataJson = await dataResponse.json();
-      this.products = dataJson.products || [];
+      this.products = dataJson.metadata?.products || [];
       this.filteredProducts = this.products;
 
-      // Load tab.json for tabs
-      const tabResponse = await fetch('tab.json');
+      // Load tab categories from remote API
+      const tabResponse = await fetch(TAB_API);
       const tabJson = await tabResponse.json();
       
-      if (tabJson.categories) {
-        this.categories = tabJson.categories;
-      } else if (tabJson.products) {
+      if (tabJson.metadata?.categories) {
+        this.categories = tabJson.metadata.categories;
+      } else if (tabJson.metadata?.products) {
         // Fallback: auto-generate a single category
         this.categories = [{
           id: 'all',
           name: 'Tất cả sản phẩm',
           icon: 'fas fa-store',
-          products: tabJson.products
+          products: tabJson.metadata.products
         }];
       }
     } catch (error) {
