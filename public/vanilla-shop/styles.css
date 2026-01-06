@@ -64,8 +64,8 @@ body::before {
 /* Header */
 .shop-header {
   text-align: center;
-  margin-bottom: 2rem;
-  padding: 2rem 0;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0;
 }
 
 .shop-header h1 {
