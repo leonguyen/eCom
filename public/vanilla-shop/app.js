@@ -25,27 +25,14 @@ class ShopApp {
 
   async loadData() {
     try {
-      // Load settings from settings.yml
-      const settingsResponse = await fetch('settings.yml');
-      const settingsText = await settingsResponse.text();
+      // Load settings from remote API
+      const settingsResponse = await fetch('https://phabyycvxbizmxoyfxwa.supabase.co/functions/v1/yaml-api/documents/9fadd73e-6f82-4979-8d06-5a5c132a5d4c');
+      const settingsJson = await settingsResponse.json();
       
-      // Parse YAML (simple key: value format on same line)
-      const settings = {};
-      settingsText.split('\n').forEach(line => {
-        const trimmed = line.trim();
-        if (trimmed && !trimmed.startsWith('#')) {
-          // Find first colon followed by space or http
-          const match = trimmed.match(/^(\w+):\s*(.+)$/);
-          if (match) {
-            settings[match[1]] = match[2];
-          }
-        }
-      });
-
-      console.log('Settings loaded:', settings);
+      const TAB_API = settingsJson.metadata?.tab;
+      const DATA_API = settingsJson.metadata?.products;
       
-      const TAB_API = settings.tab;
-      const DATA_API = settings.products;
+      console.log('Settings loaded:', { tab: TAB_API, products: DATA_API });
 
       // Load products for pagination from remote API
       const dataResponse = await fetch(DATA_API);
