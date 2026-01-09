@@ -1,10 +1,30 @@
 // ===== Shop Application with Tab UI + Pagination - Pure Vanilla JS =====
 
+function fetchJsonWithTimeout(url, timeoutMs = 12000) {
+  if (!url || typeof url !== 'string') {
+    return Promise.reject(new Error(`Invalid URL: ${String(url)}`));
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  return fetch(url, { signal: controller.signal })
+    .then(async (res) => {
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(`HTTP ${res.status} when fetching ${url}${text ? `\n${text.slice(0, 200)}` : ''}`);
+      }
+      return res.json();
+    })
+    .finally(() => clearTimeout(timer));
+}
+
 class ShopApp {
   constructor(containerId) {
     this.containerId = containerId;
     this.products = []; // For pagination (data.json)
     this.categories = []; // For tabs (tab.json)
+    this.lastError = null;
 
     // All Products controls
     this.searchTerm = '';
@@ -15,21 +35,33 @@ class ShopApp {
   }
 
   async init() {
-    await this.loadData();
+    try {
+      await this.loadData();
+    } catch (e) {
+      // loadData already records the error; continue to render an error state
+      console.error(e);
+    }
+
     this.render();
-    this.initTabController();
-    this.initPaginationController();
-    this.initControls();
-    this.initEventHandlers();
+
+    // Only init controllers if the core UI exists
+    if (!this.lastError) {
+      this.initTabController();
+      this.initPaginationController();
+      this.initControls();
+      this.initEventHandlers();
+    }
   }
 
   async loadData() {
+    this.lastError = null;
+
     try {
       // Load settings from remote API
-      const settingsResponse = await fetch(
-        'https://phabyycvxbizmxoyfxwa.supabase.co/functions/v1/yaml-api/documents/9fadd73e-6f82-4979-8d06-5a5c132a5d4c'
+      const settingsJson = await fetchJsonWithTimeout(
+        'https://phabyycvxbizmxoyfxwa.supabase.co/functions/v1/yaml-api/documents/9fadd73e-6f82-4979-8d06-5a5c132a5d4c',
+        12000
       );
-      const settingsJson = await settingsResponse.json();
 
       // The API returns { content: "tab: ...\nproducts: ..." }
       const settingsText = String(settingsJson?.content || '');
@@ -52,14 +84,12 @@ class ShopApp {
       console.log('Settings loaded:', { tab: TAB_API, products: DATA_API });
 
       // Load products for pagination from remote API
-      const dataResponse = await fetch(DATA_API);
-      const dataJson = await dataResponse.json();
-      this.products = dataJson.metadata?.products || [];
+      const dataJson = await fetchJsonWithTimeout(DATA_API, 15000);
+      this.products = dataJson.metadata?.products || dataJson.products || [];
       this.filteredProducts = this.products;
 
       // Load tab categories from remote API
-      const tabResponse = await fetch(TAB_API);
-      const tabJson = await tabResponse.json();
+      const tabJson = await fetchJsonWithTimeout(TAB_API, 15000);
 
       if (tabJson.metadata?.categories) {
         this.categories = tabJson.metadata.categories;
@@ -73,17 +103,35 @@ class ShopApp {
             products: tabJson.metadata.products,
           },
         ];
+      } else {
+        this.categories = [];
       }
     } catch (error) {
+      this.lastError = error instanceof Error ? error.message : String(error);
       console.error('Failed to load data:', error);
       this.products = [];
       this.categories = [];
+      this.filteredProducts = [];
+
+      // Re-throw so init() can decide what to do
+      throw error;
     }
   }
 
   render() {
     const container = document.getElementById(this.containerId);
     if (!container) return;
+
+    if (this.lastError) {
+      container.innerHTML = '';
+      container.appendChild(
+        new Div({ class: 'error-state' })
+          .addChild(new H2({ class: 'section-title' }).addText('Không tải được dữ liệu'))
+          .addChild(new P().addText(this.lastError))
+          .toHtmlElement()
+      );
+      return;
+    }
 
     // ===== Section 1: Main Sale - Tab UI (tab.json) =====
     const tabContainer = new TabContainer('product-tabs');
