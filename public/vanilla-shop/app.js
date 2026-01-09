@@ -24,10 +24,39 @@ class ShopApp {
   }
 
   async loadData() {
-    const TAB_API = 'https://tbdbuynmrumgdjrfunrd.supabase.co/functions/v1/yaml-api/documents/ca93a126-0ca1-4823-9f19-a8a543966571?api_key=sk_69fbafde078f7745ae7184f6ac0ab188a78b2af7a440147eeea28686a0108e9e';
-    const DATA_API = 'https://tbdbuynmrumgdjrfunrd.supabase.co/functions/v1/yaml-api/documents/9b219646-b65f-4713-b792-9682899fec7a?api_key=sk_69fbafde078f7745ae7184f6ac0ab188a78b2af7a440147eeea28686a0108e9e';
-
     try {
+      // Load settings from settings.yml
+      const settingsResponse = await fetch('settings.yml');
+      const settingsText = await settingsResponse.text();
+      
+      // Parse YAML manually (simple key: value format)
+      const settings = {};
+      settingsText.split('\n').forEach(line => {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#')) {
+          const colonIndex = trimmed.indexOf(':');
+          if (colonIndex > 0) {
+            const key = trimmed.substring(0, colonIndex).trim();
+            let value = trimmed.substring(colonIndex + 1).trim();
+            // Handle multi-line URL (value on next line)
+            if (!value && settings._pendingKey) {
+              settings[settings._pendingKey] = trimmed;
+              delete settings._pendingKey;
+            } else if (value) {
+              settings[key] = value;
+            } else {
+              settings._pendingKey = key;
+            }
+          } else if (settings._pendingKey) {
+            settings[settings._pendingKey] = trimmed;
+            delete settings._pendingKey;
+          }
+        }
+      });
+
+      const TAB_API = settings.tab;
+      const DATA_API = settings.products;
+
       // Load products for pagination from remote API
       const dataResponse = await fetch(DATA_API);
       const dataJson = await dataResponse.json();
