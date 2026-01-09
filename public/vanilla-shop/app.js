@@ -26,12 +26,29 @@ class ShopApp {
   async loadData() {
     try {
       // Load settings from remote API
-      const settingsResponse = await fetch('https://phabyycvxbizmxoyfxwa.supabase.co/functions/v1/yaml-api/documents/9fadd73e-6f82-4979-8d06-5a5c132a5d4c');
+      const settingsResponse = await fetch(
+        'https://phabyycvxbizmxoyfxwa.supabase.co/functions/v1/yaml-api/documents/9fadd73e-6f82-4979-8d06-5a5c132a5d4c'
+      );
       const settingsJson = await settingsResponse.json();
-      
-      const TAB_API = settingsJson.metadata?.tab;
-      const DATA_API = settingsJson.metadata?.products;
-      
+
+      // The API returns { content: "tab: ...\nproducts: ..." }
+      const settingsText = String(settingsJson?.content || '');
+      const settings = {};
+
+      settingsText.split('\n').forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) return;
+        const match = trimmed.match(/^([A-Za-z0-9_-]+):\s*(.+)$/);
+        if (match) settings[match[1]] = match[2];
+      });
+
+      const TAB_API = settings.tab;
+      const DATA_API = settings.products;
+
+      if (!TAB_API || !DATA_API) {
+        throw new Error('Invalid settings: missing "tab" or "products" URL');
+      }
+
       console.log('Settings loaded:', { tab: TAB_API, products: DATA_API });
 
       // Load products for pagination from remote API
@@ -43,17 +60,19 @@ class ShopApp {
       // Load tab categories from remote API
       const tabResponse = await fetch(TAB_API);
       const tabJson = await tabResponse.json();
-      
+
       if (tabJson.metadata?.categories) {
         this.categories = tabJson.metadata.categories;
       } else if (tabJson.metadata?.products) {
         // Fallback: auto-generate a single category
-        this.categories = [{
-          id: 'all',
-          name: 'Tất cả sản phẩm',
-          icon: 'fas fa-store',
-          products: tabJson.metadata.products
-        }];
+        this.categories = [
+          {
+            id: 'all',
+            name: 'Tất cả sản phẩm',
+            icon: 'fas fa-store',
+            products: tabJson.metadata.products,
+          },
+        ];
       }
     } catch (error) {
       console.error('Failed to load data:', error);
