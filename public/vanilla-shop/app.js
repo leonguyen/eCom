@@ -29,31 +29,21 @@ class ShopApp {
       const settingsResponse = await fetch('settings.yml');
       const settingsText = await settingsResponse.text();
       
-      // Parse YAML manually (simple key: value format)
+      // Parse YAML (simple key: value format on same line)
       const settings = {};
       settingsText.split('\n').forEach(line => {
         const trimmed = line.trim();
         if (trimmed && !trimmed.startsWith('#')) {
-          const colonIndex = trimmed.indexOf(':');
-          if (colonIndex > 0) {
-            const key = trimmed.substring(0, colonIndex).trim();
-            let value = trimmed.substring(colonIndex + 1).trim();
-            // Handle multi-line URL (value on next line)
-            if (!value && settings._pendingKey) {
-              settings[settings._pendingKey] = trimmed;
-              delete settings._pendingKey;
-            } else if (value) {
-              settings[key] = value;
-            } else {
-              settings._pendingKey = key;
-            }
-          } else if (settings._pendingKey) {
-            settings[settings._pendingKey] = trimmed;
-            delete settings._pendingKey;
+          // Find first colon followed by space or http
+          const match = trimmed.match(/^(\w+):\s*(.+)$/);
+          if (match) {
+            settings[match[1]] = match[2];
           }
         }
       });
 
+      console.log('Settings loaded:', settings);
+      
       const TAB_API = settings.tab;
       const DATA_API = settings.products;
 
