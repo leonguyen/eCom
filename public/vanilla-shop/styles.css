@@ -48,22 +48,15 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background:
-    /* Soft red lantern glow top-left */
-    radial-gradient(ellipse 45% 35% at 10% 15%, rgba(192, 57, 43, 0.1) 0%, transparent 70%),
-    /* Gold shimmer top-right */
-    radial-gradient(ellipse 50% 40% at 90% 10%, rgba(243, 156, 18, 0.12) 0%, transparent 60%),
-    /* Warm red glow center */
-    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(231, 76, 60, 0.06) 0%, transparent 70%),
-    /* Gold accent bottom-left */
-    radial-gradient(ellipse 40% 30% at 15% 85%, rgba(243, 156, 18, 0.1) 0%, transparent 60%),
-    /* Red accent bottom-right */
-    radial-gradient(ellipse 35% 25% at 85% 80%, rgba(192, 57, 43, 0.08) 0%, transparent 60%);
+  background-image: url('/vanilla-shop/pattern-lunar.png');
+  background-repeat: repeat;
+  background-size: 280px 280px;
+  opacity: 0.35;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Decorative Lunar patterns overlay */
+/* Soft festive glow overlay */
 body::after {
   content: '';
   position: fixed;
@@ -71,36 +64,14 @@ body::after {
   left: 0;
   right: 0;
   bottom: 0;
+  background:
+    radial-gradient(ellipse 45% 35% at 10% 15%, rgba(192, 57, 43, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 90% 10%, rgba(243, 156, 18, 0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(231, 76, 60, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 15% 85%, rgba(243, 156, 18, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 25% at 85% 80%, rgba(192, 57, 43, 0.06) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
-  background-image:
-    /* Cherry blossom / plum blossom dots scattered */
-    radial-gradient(circle 3px at 8% 12%, rgba(231, 76, 60, 0.18) 50%, transparent 50%),
-    radial-gradient(circle 2px at 10% 14%, rgba(231, 76, 60, 0.14) 50%, transparent 50%),
-    radial-gradient(circle 2.5px at 6% 10%, rgba(243, 156, 18, 0.15) 50%, transparent 50%),
-    radial-gradient(circle 3px at 92% 8%, rgba(192, 57, 43, 0.16) 50%, transparent 50%),
-    radial-gradient(circle 2px at 94% 11%, rgba(192, 57, 43, 0.12) 50%, transparent 50%),
-    radial-gradient(circle 2.5px at 90% 6%, rgba(243, 156, 18, 0.14) 50%, transparent 50%),
-    radial-gradient(circle 3px at 20% 75%, rgba(231, 76, 60, 0.14) 50%, transparent 50%),
-    radial-gradient(circle 2px at 22% 78%, rgba(243, 156, 18, 0.12) 50%, transparent 50%),
-    radial-gradient(circle 2.5px at 18% 73%, rgba(192, 57, 43, 0.13) 50%, transparent 50%),
-    radial-gradient(circle 3px at 78% 70%, rgba(231, 76, 60, 0.15) 50%, transparent 50%),
-    radial-gradient(circle 2px at 80% 73%, rgba(243, 156, 18, 0.13) 50%, transparent 50%),
-    radial-gradient(circle 2.5px at 76% 68%, rgba(192, 57, 43, 0.12) 50%, transparent 50%),
-    /* Larger decorative circles (like coins / lanterns) */
-    radial-gradient(circle 8px at 5% 45%, rgba(243, 156, 18, 0.06) 60%, transparent 60%),
-    radial-gradient(circle 6px at 95% 40%, rgba(192, 57, 43, 0.06) 60%, transparent 60%),
-    radial-gradient(circle 10px at 50% 5%, rgba(192, 57, 43, 0.05) 60%, transparent 60%),
-    radial-gradient(circle 7px at 50% 95%, rgba(243, 156, 18, 0.05) 60%, transparent 60%),
-    /* Floating small sparkles */
-    radial-gradient(circle 1.5px at 30% 20%, rgba(243, 156, 18, 0.2) 50%, transparent 50%),
-    radial-gradient(circle 1.5px at 70% 30%, rgba(243, 156, 18, 0.18) 50%, transparent 50%),
-    radial-gradient(circle 1.5px at 45% 60%, rgba(192, 57, 43, 0.16) 50%, transparent 50%),
-    radial-gradient(circle 1.5px at 60% 85%, rgba(243, 156, 18, 0.2) 50%, transparent 50%),
-    radial-gradient(circle 1.5px at 15% 55%, rgba(231, 76, 60, 0.18) 50%, transparent 50%),
-    radial-gradient(circle 1.5px at 85% 55%, rgba(231, 76, 60, 0.16) 50%, transparent 50%),
-    radial-gradient(circle 1.5px at 35% 90%, rgba(243, 156, 18, 0.17) 50%, transparent 50%),
-    radial-gradient(circle 1.5px at 65% 15%, rgba(192, 57, 43, 0.15) 50%, transparent 50%);
 }
 
 .container {
